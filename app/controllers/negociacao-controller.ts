@@ -1,5 +1,6 @@
 import { Negociacao } from "../models/negociacao.js";
 import { Negociacoes } from "../models/negociacoes.js";
+import { MensagemView } from "../views/mensagem-view.js";
 import { NegociacoesView } from "../views/negociacoes-view.js";
 
 export class NegociacaoController {
@@ -10,6 +11,10 @@ export class NegociacaoController {
     private negociacoes: Negociacoes = new Negociacoes();
 
     private negociacoesView = new NegociacoesView("#negociacoesView");
+    private mensagemView = new MensagemView("#mensagemView");
+
+    private readonly SABADO = 6;
+    private readonly DOMINGO = 0;
 
     constructor() {
         this.inputData = document.querySelector("#data");
@@ -17,8 +22,23 @@ export class NegociacaoController {
         this.inputValor = document.querySelector("#valor");
         this.negociacoesView.update(this.negociacoes);
     }
-    
-    criaNegociacao(): Negociacao {
+
+    public adicionaNegociacao(): void {
+        const negociacao = this.criaNegociacao();
+        if (!this.ehDiaUtil(negociacao.data)) {
+            this.mensagemView.update("Somente negociações em dias úteis são aceitas");
+            return   
+        }
+        this.negociacoes.adicionaNegociacao(negociacao);
+        this.limpaFormulario();
+        this.atualizaView();
+    }
+
+    private ehDiaUtil(data: Date) {
+        return data.getDay() > this.DOMINGO && data.getDay() < this.SABADO;
+    }
+
+    private criaNegociacao(): Negociacao {
         const er = /-/g;
         const date = new Date(this.inputData.value.replace(er, ","));
         const quantidade = parseInt(this.inputQuantidade.value);
@@ -26,18 +46,16 @@ export class NegociacaoController {
         return new Negociacao(date, quantidade, valor);
     }
 
-    adicionaNegociacao(): void {
-        const negociacao = this.criaNegociacao();
-        this.negociacoes.adicionaNegociacao(negociacao);
-        this.negociacoesView.update(this.negociacoes);
-        this.limpaFormulario();
-    }
-
-    limpaFormulario(): void {
+    private limpaFormulario(): void {
         this.inputData.value = "";
         this.inputQuantidade.value = "";
         this.inputValor.value = "";
         this.inputData.focus();
+    }
+
+    private atualizaView(): void {
+        this.negociacoesView.update(this.negociacoes);
+        this.mensagemView.update("Negociação adicionada com sucesso");
     }
 
 }
