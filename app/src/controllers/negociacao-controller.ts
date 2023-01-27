@@ -12,7 +12,7 @@ export class NegociacaoController {
 
     private negociacoes: Negociacoes = new Negociacoes();
 
-    private negociacoesView = new NegociacoesView("#negociacoesView", true);
+    private negociacoesView = new NegociacoesView("#negociacoesView");
     private mensagemView = new MensagemView("#mensagemView");
 
     private readonly SABADO = 6;

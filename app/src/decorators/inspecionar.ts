@@ -1,4 +1,4 @@
-export function inspecionar(
+export function inspecionar( 
     target: any,
     propertyKey: string,
     descriptor: PropertyDescriptor
