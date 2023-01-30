@@ -44,6 +44,24 @@ export class NegociacaoController {
         this.atualizaView();
     }
 
+    importaDados(): void {
+        fetch("http://localhost:8080/dados")
+        .then(res => res.json())
+        .then((dados: any[]) => {
+            return dados.map(dadosDeHoje => {
+                return new Negociacao(new Date(), 
+                dadosDeHoje.vezes, 
+                dadosDeHoje.montante);
+            })
+        })
+        .then(negociacoesDeHoje => {
+            for(let negociacao of negociacoesDeHoje) {
+                this.negociacoes.adicionaNegociacao(negociacao);
+            }
+            this.negociacoesView.update(this.negociacoes);
+        });
+    }
+
     private ehDiaUtil(data: Date) {
         return data.getDay() > DiasDaSemana.DOMINGO && data.getDay() < DiasDaSemana.SABADO;
     }
